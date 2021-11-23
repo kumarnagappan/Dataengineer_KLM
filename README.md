@@ -53,3 +53,14 @@ Variable 4 : Input file along with path where the dataset is present
 Variable 5 : Output file along with the path where the final raw dataset to be placed
 
 Please refer spark-submit command file in repo for reference .
+
+
+
+Steps To Run aircraft details Job:
+
+Step 1: pass the variables to spark-submit command 
+
+Variable 1 : Actual string which needs to be subdivided into substrings
+Variable 2 : length of substrings to be created
+
+Please refer spark-submit command file in repo for reference .
