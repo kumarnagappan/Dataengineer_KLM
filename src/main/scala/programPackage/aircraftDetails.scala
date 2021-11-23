@@ -7,6 +7,15 @@ import org.apache.spark.sql.types.{IntegerType, StringType, StructType, Timestam
 /* This job reads the aircraftdetails file and generate final raw dataset and 2 KPI's which are finally loaded to SqlServer */
 /* Extending Trait App instead of main */
 object aircraftDetails extends App {
+  try {
+    //To get Path and SQL Server variables
+    val user = args(0)
+    val password = args(1)
+    val url = args(2)
+    val inputFile = args(3)
+    val outputFile = args(4)
+
+
 
   println("Starting of Job aircraftdetails ....")
 
@@ -60,7 +69,7 @@ object aircraftDetails extends App {
 
   import spark.implicits._
   //Reading actual Raw file from resources as this will be part of Jar
-  val fileContent = spark.read.textFile("src/main/resources/dataset_flights.csv")
+  val fileContent = spark.read.textFile(inputFile)
   //Fetching only the meta data part from the file
   val uniqueDF = fileContent.withColumn("index",monotonically_increasing_id())
                   .filter(col("index") < 6)
@@ -68,9 +77,9 @@ object aircraftDetails extends App {
 
   val splitDF = uniqueDF.withColumn("key",split(col("value"),";").getItem(0))
                   .withColumn("value",split(col("value"),";").getItem(1))
-  //Pivoting the metadata to Join with data part
-
-  val tempLookup1 = splitDF.groupBy().pivot("key").agg(first("value"))
+  //Removing additional , in fields and Pivoting the metadata to Join with data part
+  val splitDFRem = splitDF.withColumn("value",regexp_replace(col("value"),",", ""))
+  val tempLookup1 = splitDFRem.groupBy().pivot("key").agg(first("value"))
   //casting column values to DataTimeStamp as per the requirement
   val tempLookup2 = tempLookup1
     .withColumn("End of period", to_timestamp(col("End of period"), "dd/MMM/yy"))
@@ -93,20 +102,23 @@ object aircraftDetails extends App {
 
   val resultdf = finalDataF.withColumn("LateAircraftDelay",regexp_replace(col("LateAircraftDelay"),";", ""))
 
+    //writing the file to local server
+    resultdf.coalesce(1).write.mode("overwrite").csv(outputFile)
+
   resultdf.createOrReplaceTempView("resultdf")
 //Writing the final DF to Sql Server Table CustomerFlightInfo
   resultdf.write.format("jdbc")
     .mode("overwrite")
     .option("driver" , "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-    .option("url", "jdbc:sqlserver://192.168.1.4:1433;instanceName=LAPTOP-597CGSMP;databaseName=aircraft_info")
+    .option("url", url)
     .option("dbtable", "CustomerFlightInfo")
-    .option("user","admin")
-    .option("password","admin")
+    .option("user",user)
+    .option("password",password)
     .save()
 
   // show sample records from data frame
   val delayedCancelled = spark.sql(
-  """select count(*) from resultdf
+  """select * from resultdf
       |where Cancelled=1 or ArrDelay > 0""".stripMargin)
 
   //Writing the KPI of Delayed and cancelled flights to Sql Server Table DelayedCancelledKPI
@@ -114,10 +126,10 @@ object aircraftDetails extends App {
   delayedCancelled.write.format("jdbc")
     .mode("overwrite")
     .option("driver" , "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-    .option("url", "jdbc:sqlserver://192.168.1.4:1433;instanceName=LAPTOP-597CGSMP;databaseName=aircraft_info")
+    .option("url", url)
     .option("dbtable", "DelayedCancelledKPI")
-    .option("user","admin")
-    .option("password","admin")
+    .option("user",user)
+    .option("password",password)
     .save()
 
   //DF to identify reason for delay
@@ -155,10 +167,14 @@ object aircraftDetails extends App {
   finalDelay.write.format("jdbc")
     .mode("overwrite")
     .option("driver" , "com.microsoft.sqlserver.jdbc.SQLServerDriver")
-    .option("url", "jdbc:sqlserver://192.168.1.4:1433;instanceName=LAPTOP-597CGSMP;databaseName=aircraft_info")
+    .option("url", url)
     .option("dbtable", "DelayedReasonKPI")
-    .option("user","admin")
-    .option("password","admin")
+    .option("user",user)
+    .option("password",password)
     .save()
-
+  }
+  catch {
+    case e: ArrayIndexOutOfBoundsException => println("Array out of bound exception")
+    case e: Exception => println(e.printStackTrace())
+  }
 }

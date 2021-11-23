@@ -37,3 +37,19 @@ build tool --> Maven
 SQL  --> microsoft sqlserver 2019
 Remote  --> Github
 OS --> windows 10
+
+
+Steps To Run aircraft details Job:
+
+Step 1: pass the variables to spark-submit command 
+
+Variable 1 : SQL SERVER DB USER NAME ( This project works in Login based and not windows based authentication for now)
+Variable 2 : SQL SERVER DB Password
+Variable 3 : JDBC URL made of host , instance and port number and DB name . For example given below
+
+"jdbc:sqlserver://192.168.1.3:1433;instanceName=LAPTOP-597CGSMP;databaseName=aircraft_info"
+
+Variable 4 : Input file along with path where the dataset is present
+Variable 5 : Output file along with the path where the final raw dataset to be placed
+
+Please refer spark-submit command file in repo for reference .
