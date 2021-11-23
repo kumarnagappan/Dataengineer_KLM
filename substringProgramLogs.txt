@@ -1,0 +1,9 @@
+C:\Users\kumar>spark-submit --master local[*] --driver-memory 1g --executor-memory 1g --class main.scala.programPackage.substringProgram C:\Users\kumar\IdeaProjects\DataEngineer\target\DataEngineer-1.0-SNAPSHOT.jar 146425 3
+21/11/23 11:23:41 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+146
+464
+642
+425
+log4j:WARN No appenders could be found for logger (org.apache.spark.util.ShutdownHookManager).
+log4j:WARN Please initialize the log4j system properly.
+log4j:WARN See http://logging.apache.org/log4j/1.2/faq.html#noconfig for more info.
