@@ -39,7 +39,9 @@ Remote  --> Github
 OS --> windows 10
 
 Assignment 1 : csv feed to SQLSERVER
+
 Steps To Run aircraft details Job:
+
 Scala File name : aircraftDetails
 
 Make sure the jar path is provided as per your save location of the shadow jar. 
