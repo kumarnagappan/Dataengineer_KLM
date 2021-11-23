@@ -1,0 +1,4 @@
+spark-submit --master local[*] --driver-memory 1g --executor-memory 1g --class main.scala.programPackage.substringProgram C:\Users\kumar\IdeaProjects\DataEngineer\target\DataEngineer-1.0-SNAPSHOT.jar 146425 3
+
+
+

@@ -38,8 +38,11 @@ SQL  --> microsoft sqlserver 2019
 Remote  --> Github
 OS --> windows 10
 
-
+Assignment 1 : csv feed to SQLSERVER
 Steps To Run aircraft details Job:
+Scala File name : aircraftDetails
+
+Make sure the jar path is provided as per your save location of the shadow jar. 
 
 Step 1: pass the variables to spark-submit command 
 
@@ -52,11 +55,17 @@ Variable 3 : JDBC URL made of host , instance and port number and DB name . For 
 Variable 4 : Input file along with path where the dataset is present
 Variable 5 : Output file along with the path where the final raw dataset to be placed
 
+spark-submit --master local[*] --driver-memory 1g --executor-memory 1g --class main.scala.programPackage.aircraftDetails C:\Users\kumar\IdeaProjects\DataEngineer\target\DataEngineer-1.0-SNAPSHOT.jar admin admin "jdbc:sqlserver://192.168.1.3:1433;instanceName=LAPTOP-597CGSMP;databaseName=aircraft_info" "src/main/resources/dataset_flights.csv" "file:///C:/Users/kumar/Downloads/finalraw.csv"
+
+
 Please refer spark-submit command file in repo for reference .
 
 
+Assignment 2 : Substring Generation
+Steps To Run substring details Job:
+Scala File name :  substringProgram
 
-Steps To Run aircraft details Job:
+Make sure the jar path is provided as per your save location of the shadow jar. 
 
 Step 1: pass the variables to spark-submit command 
 
@@ -64,3 +73,7 @@ Variable 1 : Actual string which needs to be subdivided into substrings
 Variable 2 : length of substrings to be created
 
 Please refer spark-submit command file in repo for reference .
+
+
+
+spark-submit --master local[*] --driver-memory 1g --executor-memory 1g --class main.scala.programPackage.substringProgram C:\Users\kumar\IdeaProjects\DataEngineer\target\DataEngineer-1.0-SNAPSHOT.jar 146425 3
